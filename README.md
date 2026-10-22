@@ -39,8 +39,15 @@ says the same thing and shows the same patch shape.
 ## Install
 
 ```sh
+# track the default branch
 dsh plugin --profile <profile> add github:xyx-cmd-maker/dsh-web-tune
+
+# or pin a release, which is what you want for a working setup
+dsh plugin --profile <profile> add github:xyx-cmd-maker/dsh-web-tune#v1.0.0
 ```
+
+`main` also carries documentation and CI changes, so tracking it means the
+checkout moves for reasons that do not affect behaviour. A tag does not.
 
 The bundle must be the last one in `dsh.profile.bundles`, because patch layers
 apply in list order and this one has to come after the bundles it overrides.
