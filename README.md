@@ -136,6 +136,22 @@ having an effect; an unknown key in a row's config is ignored rather than
 fatal, so the failure mode is a setting that quietly does nothing. Check the
 plugin's own config schema after a major upgrade.
 
+## Checks
+
+```sh
+node --check index.js
+node scripts/check_manifest.mjs
+python3 -c "import yaml; yaml.safe_load(open('cordis.patch.yml'))"
+```
+
+`check_manifest.mjs` runs without dependencies and asserts more than syntax: the
+manifest is self-consistent, every file it names exists, and the patch still says
+`provider: auto`, `fetchProviderTakeover: false`, `searchProvider:
+deepseek-official`, `fetchProvider: http`. Those four lines are the bundle's
+entire purpose, so deleting one is a regression even though the YAML stays valid.
+
+The same three commands run in CI on every push and pull request.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

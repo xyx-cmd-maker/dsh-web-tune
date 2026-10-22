@@ -4,11 +4,15 @@
   "description": "DeepSeek Harness profile bundle that pins dsh-free-search to the auto engine pool and keeps the web seam on the shipped providers.",
   "type": "module",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "files": [
     "index.js",
     "cordis.patch.yml",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "scripts/check_manifest.mjs"
   ],
   "engines": {
     "dsh": ">=0.2.0 <0.3.0"

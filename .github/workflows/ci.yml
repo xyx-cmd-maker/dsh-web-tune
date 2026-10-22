@@ -1,0 +1,64 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Parse the entry point
+        run: node --check index.js
+
+      - name: Check the manifest and the patch contents
+        run: node scripts/check_manifest.mjs
+
+      # The manifest check above is structural. This step is the one that would
+      # catch a stray tab or an unclosed quote in the patch file.
+      - name: Parse the patch as YAML
+        run: |
+          python3 - <<'PY'
+          import sys, yaml
+          path = "cordis.patch.yml"
+          with open(path, encoding="utf-8") as fh:
+              doc = yaml.safe_load(fh)
+          if not isinstance(doc, list) or not doc:
+              sys.exit(f"{path}: expected a non-empty YAML list")
+
+          # Rows inserted by this layer live under `insert`, not at the top level.
+          ids = []
+          for entry in doc:
+              if not isinstance(entry, dict):
+                  sys.exit(f"{path}: every entry must be a mapping, got {type(entry).__name__}")
+              if "id" in entry:
+                  ids.append(entry["id"])
+              for row in entry.get("insert", []) or []:
+                  ids.append(row.get("id"))
+
+          missing = {"web-tune", "web-search-free", "web"} - set(ids)
+          if missing:
+              sys.exit(f"{path}: missing rows {sorted(missing)}; found {ids}")
+          print(f"{path}: parsed {len(doc)} entries; row ids {ids}")
+          PY
+
+      - name: Confirm the bundle manifest has no dangling file references
+        run: |
+          node -e '
+          const fs = require("node:fs");
+          const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+          const missing = (pkg.files ?? []).filter((f) => !fs.existsSync(f));
+          if (missing.length) { console.error("missing:", missing); process.exit(1); }
+          console.log("files[] all present:", (pkg.files ?? []).join(", "));
+          '
