@@ -1,5 +1,7 @@
 # dsh-web-tune
 
+[![ci](https://github.com/xyx-cmd-maker/dsh-web-tune/actions/workflows/ci.yml/badge.svg)](https://github.com/xyx-cmd-maker/dsh-web-tune/actions/workflows/ci.yml)
+
 A DeepSeek Harness profile bundle that adjusts two rows other bundles own: it
 pins [`dsh-free-search`](https://www.npmjs.com/package/dsh-free-search) to its
 `auto` engine pool, and it keeps the web seam on the shipped providers so that
