@@ -1,0 +1,7 @@
+# Keep the repository in LF regardless of the checking-out platform.
+* text=auto eol=lf
+
+# Binary-ish assets, should they ever be added.
+*.png binary
+*.jpg binary
+*.ico binary

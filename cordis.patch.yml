@@ -1,0 +1,49 @@
+# dsh-web-tune — workspace-local tuning layer.
+#
+# Why a bundle patch and not an edit of the profile:
+#   the desktop profile is owned by the Electron app; writing its cordis.patch.yml
+#   by hand is out of bounds. A bundle installed through plugin_manager is the
+#   sanctioned path, and its layer applies after the bundle it targets.
+#
+# `config` on a targeted row is replaced wholesale, never deep-merged, so every
+# field the row needs is restated here.
+
+# 0) A row for this package itself.
+#    v0.2.1 declared no entry artifact, so the installed-package check reported
+#    "declared entry artifact missing" and the whole patch layer was dropped on
+#    the next boot. A bundle that owns rows must also resolve its own package,
+#    so this row makes the package loadable and gives the inventory something
+#    real to verify. `apply()` in index.js is empty: the plugin provides nothing.
+- insert:
+    - id: web-tune
+      name: dsh-web-tune
+      config: {}
+
+# 1) free-search: auto routing instead of the fixed bing default.
+- id: web-search-free
+  config:
+    provider: auto
+    disabledEngines: []
+    bingMarket: zh-CN
+    # Do not let the search plugin also take over web.fetchProvider. Its default
+    # (true) repoints fetch at its own extractor, which is why the first fetch
+    # after install returned extracted prose instead of the raw page. The host
+    # asked for the built-in fetch as the daily path, so the takeover stays off.
+    fetchProviderTakeover: false
+
+# 2) web seam: restore the shipped defaults that dsh-tinyfish overrode.
+#    - searchProvider: deepseek-official is the shipped default. dsh-free-search
+#      deliberately takes the field over at runtime while it still reads as that
+#      default, so leaving it here keeps free-search in charge of search *and*
+#      avoids a dangling reference if free-search is ever disabled.
+#    - fetchProvider: http keeps the built-in fetch as the daily path.
+#      To send fetch through TinyFish instead (a free API key is required first),
+#      change this one line and reinstall the bundle; reinstalling is required,
+#      not cosmetic, because patch layers apply in bundle order and this package
+#      must stay the last layer:
+#        plugin_manager remove_bundle   dsh-web-tune
+#        plugin_manager install_bundle  <this directory>
+- id: web
+  config:
+    searchProvider: deepseek-official
+    fetchProvider: http

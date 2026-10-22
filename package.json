@@ -1,0 +1,39 @@
+{
+  "name": "dsh-web-tune",
+  "version": "1.0.0",
+  "description": "DeepSeek Harness profile bundle that pins dsh-free-search to the auto engine pool and keeps the web seam on the shipped providers.",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "dsh": ">=0.2.0 <0.3.0"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-bundle",
+    "cordis",
+    "web-search",
+    "web-fetch"
+  ],
+  "license": "MIT",
+  "author": "xyx-cmd-maker",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xyx-cmd-maker/dsh-web-tune.git"
+  },
+  "homepage": "https://github.com/xyx-cmd-maker/dsh-web-tune#readme",
+  "bugs": {
+    "url": "https://github.com/xyx-cmd-maker/dsh-web-tune/issues"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
